@@ -3,74 +3,394 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Workweek Progress</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
 
-  <main class="card">
-    <div class="header">
-      <h1>Workweek Progress</h1>
-      <span class="badge" id="status-badge">In Progress</span>
-    </div>
-
-    <div class="clock" id="live-clock">Loading time...</div>
-    <div class="percentage" id="percent-text">0.00%</div>
-
-    <div class="bar-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progress-track">
-      <div class="bar-fill" id="progress-bar"></div>
-    </div>
-
-    <p class="subtitle">Monday 12:00 AM &rarr; Friday 3:00 PM</p>
-  </main>
-
-  <script>
-    function updateProgress() {
-      const now = new Date();
-
-      // Format live day and time (e.g., "Monday, 9:43:05 AM")
-      const clockText = now.toLocaleTimeString([], {
-        weekday: "long",
-        hour: "numeric",
-        minute: "2-digit",
-        second: "2-digit"
-      });
-      document.getElementById("live-clock").textContent = clockText;
-      
-      // Convert JS days (Sun=0, Mon=1) so Monday = 1 and Sunday = 7
-      const d = now.getDay() === 0 ? 7 : now.getDay();
-      const h = now.getHours();
-      const m = now.getMinutes();
-      
-      // Calculate total elapsed minutes
-      const elapsedMinutes = ((d - 1) * 1440) + (h * 60) + m;
-      
-      // Calculate percentage and clamp between 0% and 100%
-      let p = (elapsedMinutes / 6660) * 100;
-      p = Math.max(0, Math.min(100, p));
-      
-      const formatted = p.toFixed(2) + "%";
-      
-      // Update text, bar width, and accessibility attribute
-      document.getElementById("percent-text").textContent = formatted;
-      document.getElementById("progress-bar").style.width = formatted;
-      document.getElementById("progress-track").setAttribute("aria-valuenow", p.toFixed(2));
-
-      // Update status badge on Friday at 3:00 PM
-      const badge = document.getElementById("status-badge");
-      if (p >= 100) {
-        badge.textContent = "Weekend!";
-        badge.classList.add("done");
-      } else {
-        badge.textContent = "In Progress";
-        badge.classList.remove("done");
-      }
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #f5f5f5;
+      font-family: Arial, sans-serif;
+      color: #222;
     }
 
-    updateProgress();
-    setInterval(updateProgress, 1000);
-  </script>
+    .container {
+      width: min(90%, 500px);
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    #status {
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+
+    #percentage {
+      font-size: 64px;
+      font-weight: bold;
+      margin: 20px 0;
+    }
+
+    #times {
+      font-size: 15px;
+      color: #666;
+      margin-bottom: 25px;
+    }
+
+    .progress-container {
+      width: 100%;
+      height: 20px;
+      background: #ddd;
+      border-radius: 20px;
+      overflow: hidden;
+      margin-bottom: 25px;
+    }
+
+    #progress {
+      height: 100%;
+      width: 0%;
+      background: #222;
+      transition: width 0.5s ease;
+    }
+
+    .settings {
+      margin-top: 25px;
+      padding: 20px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      align-items: center;
+      margin: 10px 0;
+      flex-wrap: wrap;
+    }
+
+    label {
+      font-weight: bold;
+    }
+
+    select,
+    input {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 9px 16px;
+      border: none;
+      border-radius: 7px;
+      background: #222;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.8;
+    }
+
+    #settingsPanel {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <h1>Workweek Progress</h1>
+
+    <div id="status">In Progress</div>
+
+    <div id="percentage">0.00%</div>
+
+    <div class="progress-container">
+      <div id="progress"></div>
+    </div>
+
+    <div id="times">
+      Loading time...
+    </div>
+
+    <button onclick="toggleSettings()">⚙ Customize</button>
+
+    <div class="settings" id="settingsPanel">
+
+      <h3>Customize Week</h3>
+
+      <div class="row">
+        <label>Start:</label>
+
+        <select id="startDay">
+          <option value="0">Sunday</option>
+          <option value="1" selected>Monday</option>
+          <option value="2">Tuesday</option>
+          <option value="3">Wednesday</option>
+          <option value="4">Thursday</option>
+          <option value="5">Friday</option>
+          <option value="6">Saturday</option>
+        </select>
+
+        <input type="time" id="startTime" value="00:00">
+      </div>
+
+      <div class="row">
+        <label>End:</label>
+
+        <select id="endDay">
+          <option value="0">Sunday</option>
+          <option value="1">Monday</option>
+          <option value="2">Tuesday</option>
+          <option value="3">Wednesday</option>
+          <option value="4">Thursday</option>
+          <option value="5" selected>Friday</option>
+          <option value="6">Saturday</option>
+        </select>
+
+        <input type="time" id="endTime" value="15:00">
+      </div>
+
+      <button onclick="saveSettings()">Save</button>
+
+    </div>
+
+  </div>
+
+<script>
+
+const dayNames = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday"
+];
+
+function toggleSettings() {
+  const panel = document.getElementById("settingsPanel");
+
+  if (panel.style.display === "block") {
+    panel.style.display = "none";
+  } else {
+    panel.style.display = "block";
+  }
+}
+
+
+// Load saved settings
+function loadSettings() {
+
+  const saved = localStorage.getItem("weekSettings");
+
+  if (!saved) return;
+
+  const settings = JSON.parse(saved);
+
+  document.getElementById("startDay").value = settings.startDay;
+  document.getElementById("startTime").value = settings.startTime;
+
+  document.getElementById("endDay").value = settings.endDay;
+  document.getElementById("endTime").value = settings.endTime;
+}
+
+
+// Save settings
+function saveSettings() {
+
+  const settings = {
+    startDay: Number(document.getElementById("startDay").value),
+    startTime: document.getElementById("startTime").value,
+
+    endDay: Number(document.getElementById("endDay").value),
+    endTime: document.getElementById("endTime").value
+  };
+
+  localStorage.setItem(
+    "weekSettings",
+    JSON.stringify(settings)
+  );
+
+  updateProgress();
+
+  document.getElementById("settingsPanel").style.display = "none";
+}
+
+
+// Get the most recent occurrence of a weekday
+function getStartOfWeek(now, targetDay) {
+
+  const date = new Date(now);
+
+  const difference = date.getDay() - targetDay;
+
+  date.setDate(date.getDate() - difference);
+
+  return date;
+}
+
+
+// Create the configured start/end dates
+function getWeekRange(now) {
+
+  const startDay =
+    Number(document.getElementById("startDay").value);
+
+  const endDay =
+    Number(document.getElementById("endDay").value);
+
+  const startTime =
+    document.getElementById("startTime").value.split(":");
+
+  const endTime =
+    document.getElementById("endTime").value.split(":");
+
+
+  let start = getStartOfWeek(now, startDay);
+
+  start.setHours(
+    Number(startTime[0]),
+    Number(startTime[1]),
+    0,
+    0
+  );
+
+
+  let end = getStartOfWeek(now, endDay);
+
+  end.setHours(
+    Number(endTime[0]),
+    Number(endTime[1]),
+    0,
+    0
+  );
+
+
+  // If the end comes before the start,
+  // it's part of the following week.
+  if (end <= start) {
+    end.setDate(end.getDate() + 7);
+  }
+
+
+  // If we're currently before the start,
+  // use the previous week's range.
+  if (now < start) {
+    start.setDate(start.getDate() - 7);
+    end.setDate(end.getDate() - 7);
+  }
+
+
+  return {
+    start: start,
+    end: end
+  };
+}
+
+
+// Format a date nicely
+function formatDate(date) {
+
+  return date.toLocaleString([], {
+    weekday: "long",
+    hour: "numeric",
+    minute: "2-digit"
+  });
+
+}
+
+
+// Update everything
+function updateProgress() {
+
+  const now = new Date();
+
+  const range = getWeekRange(now);
+
+  const start = range.start;
+  const end = range.end;
+
+
+  const total =
+    end.getTime() - start.getTime();
+
+  const elapsed =
+    now.getTime() - start.getTime();
+
+
+  let percentage =
+    (elapsed / total) * 100;
+
+
+  // Before start
+  if (percentage < 0) {
+    percentage = 0;
+  }
+
+
+  // After end
+  if (percentage > 100) {
+    percentage = 100;
+  }
+
+
+  document.getElementById("percentage").textContent =
+    percentage.toFixed(2) + "%";
+
+
+  document.getElementById("progress").style.width =
+    percentage + "%";
+
+
+  // Status
+  if (percentage >= 100) {
+    document.getElementById("status").textContent =
+      "Complete 🎉";
+  }
+
+  else if (percentage <= 0) {
+    document.getElementById("status").textContent =
+      "Not started yet";
+  }
+
+  else {
+    document.getElementById("status").textContent =
+      "In Progress";
+  }
+
+
+  document.getElementById("times").textContent =
+    formatDate(start) +
+    " → " +
+    formatDate(end);
+}
+
+
+// Initialize
+loadSettings();
+updateProgress();
+
+
+// Update every second
+setInterval(updateProgress, 1000);
+
+</script>
 
 </body>
 </html>
-
