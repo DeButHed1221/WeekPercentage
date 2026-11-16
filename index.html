@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Workweek Progress</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <main class="card">
+    <div class="header">
+      <h1>Workweek Progress</h1>
+      <span class="badge" id="status-badge">In Progress</span>
+    </div>
+
+    <div class="clock" id="live-clock">Loading time...</div>
+    <div class="percentage" id="percent-text">0.00%</div>
+
+    <div class="bar-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progress-track">
+      <div class="bar-fill" id="progress-bar"></div>
+    </div>
+
+    <p class="subtitle">Monday 12:00 AM &rarr; Friday 3:00 PM</p>
+  </main>
+
+  <script>
+    function updateProgress() {
+      const now = new Date();
+
+      // Format live day and time (e.g., "Monday, 9:43:05 AM")
+      const clockText = now.toLocaleTimeString([], {
+        weekday: "long",
+        hour: "numeric",
+        minute: "2-digit",
+        second: "2-digit"
+      });
+      document.getElementById("live-clock").textContent = clockText;
+      
+      // Convert JS days (Sun=0, Mon=1) so Monday = 1 and Sunday = 7
+      const d = now.getDay() === 0 ? 7 : now.getDay();
+      const h = now.getHours();
+      const m = now.getMinutes();
+      
+      // Calculate total elapsed minutes
+      const elapsedMinutes = ((d - 1) * 1440) + (h * 60) + m;
+      
+      // Calculate percentage and clamp between 0% and 100%
+      let p = (elapsedMinutes / 6660) * 100;
+      p = Math.max(0, Math.min(100, p));
+      
+      const formatted = p.toFixed(2) + "%";
+      
+      // Update text, bar width, and accessibility attribute
+      document.getElementById("percent-text").textContent = formatted;
+      document.getElementById("progress-bar").style.width = formatted;
+      document.getElementById("progress-track").setAttribute("aria-valuenow", p.toFixed(2));
+
+      // Update status badge on Friday at 3:00 PM
+      const badge = document.getElementById("status-badge");
+      if (p >= 100) {
+        badge.textContent = "Weekend!";
+        badge.classList.add("done");
+      } else {
+        badge.textContent = "In Progress";
+        badge.classList.remove("done");
+      }
+    }
+
+    updateProgress();
+    setInterval(updateProgress, 1000);
+  </script>
+
+</body>
+</html>
+
