@@ -213,8 +213,8 @@ body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.25)),
-    url("https://images.steamusercontent.com/ugc/1034086185599312603/470474EC0FDFF18CDFB17E2FE69023F0CB2AF405/?imw=512&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false");
+    linear-gradient(rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.15)),
+    url("https://static.wikia.nocookie.net/hollowknight/images/7/7f/Greenpath_South_Area.png/revision/latest?cb=20190312031257");
 
   background-size: cover;
   background-position: center;
