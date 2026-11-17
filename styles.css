@@ -210,20 +210,21 @@ button:active {
 }
 
 body {
-    background-image:
-        linear-gradient(rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.25)),
-        url("https://images.steamusercontent.com/ugc/1034086185599312603/470474EC0FDFF18CDFB17E2FE69023F0CB2AF405/?imw=512&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false");
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-}
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.25)),
+    url("https://images.steamusercontent.com/ugc/1034086185599312603/470474EC0FDFF18CDFB17E2FE69023F0CB2AF405/?imw=512&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false");
 
-body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    background: rgba(255, 255, 255, 0.3);
-    z-index: -1;
-    pointer-events: none;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+
+  color: var(--text-main);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 1rem;
 }
