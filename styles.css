@@ -210,10 +210,12 @@ button:active {
 }
 
 body {
-  background-image: url("https://images.steamusercontent.com/ugc/1034086185599312603/470474EC0FDFF18CDFB17E2FE69023F0CB2AF405/?imw=512&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.25)),
+        url("https://images.steamusercontent.com/ugc/1034086185599312603/470474EC0FDFF18CDFB17E2FE69023F0CB2AF405/?imw=512&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false");
+
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
 }
 
