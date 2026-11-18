@@ -52,10 +52,10 @@ body {
   width: 100%;
   max-width: 420px;
   padding: 2rem;
-  border-radius: 20px;
+  border-radius: 50px;
   box-shadow: var(--shadow);
   text-align: center;
-  backdrop-filter: blur(6px);
+  backdrop-filter: blur(10px);
 }
 
 .header {
